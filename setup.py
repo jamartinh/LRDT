@@ -1,9 +1,9 @@
 from distutils.core import setup
 
 setup(
-    name = 'lmdt',
+    name = 'lrdt',
     version = '1.0',
-    packages = ['lmdt'],
+    packages = ['lrdt'],
     url = '',
     license = 'MIT',
     author = 'Jose Antonio Martin H.',
