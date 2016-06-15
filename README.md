@@ -1,5 +1,5 @@
 # LRDT
-Logistic Regrssión classifier with binary variables from random trees
+Logistic Regressión classifier with binary variables from random trees
 
 This module add the capability to include non-linear interactions between variables to a logistic regression classifier.
 
