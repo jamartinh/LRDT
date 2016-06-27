@@ -339,18 +339,20 @@ class DTRTransformer(BaseEstimator, TransformerMixin):
 
     def predict(self, X):
         y_pred_class = self.estimator.predict(X)
-        # if not self.rule_set:
+
+        #if not self.rule_set:
         return y_pred_class
 
-        # out_predictions = self.posterior['class'].where(self.posterior['class'] != -1, y_pred_class)
-        # return out_predictions.values
+        #out_predictions = self.posterior['class'].where(self.posterior['class'] != -1, y_pred_class)
+        #return out_predictions.values
 
     def predict_proba(self, X):
         probas = self.estimator.predict_proba(X)
-        # if not self.rule_set:
+        #if not self.rule_set:
         return probas
-        # out_probas = self.probas.where(self.probas.max(axis = 1) > -1.0, probas)
-        # return out_probas.values
+
+        #out_probas = self.probas.where(self.probas.max(axis = 1) > -1.0, probas)
+        #return out_probas.values
 
     def fit_transform(self, X, y = None, **fit_params):
         """Fit to data, then transform it.
