@@ -249,7 +249,16 @@ class DTRTransformer(BaseEstimator, TransformerMixin):
 
         return X_new
 
-    def fit_tree(self, X, y):
+    def fit_tree(self, X, y,
+                 percent_threshold = None,
+                 proportion_threshold = None,
+                 features_fraction = None,
+                 min_depth = None,
+                 max_depth = None,
+                 max_rules = None,
+                 n_iter = None,
+                 n = None,
+                 frac = None):
         """Extract rules from a series of random tress a stores them in the rules dict.
 
                 Parameters
@@ -266,6 +275,15 @@ class DTRTransformer(BaseEstimator, TransformerMixin):
                 -------
                 self
                 """
+
+        self.percent_threshold = percent_threshold if percent_threshold is not None else self.percent_threshold
+        self.proportion_threshold = proportion_threshold if proportion_threshold is not None else self.proportion_threshold
+        self.max_rules = max_rules if max_rules is not None else self.max_rules
+        self.features_fraction = features_fraction if features_fraction is not None else self.features_fraction
+        self.min_depth = min_depth if min_depth is not None else self.min_depth
+        self.max_depth = max_depth if max_depth is not None else self.max_depth
+        self.n_iter = n_iter if n_iter is not None else self.n_iter
+
         self.classes = pd.Series(y).unique()
         MAX_INT = np.iinfo(np.int32).max
         rule_list = []
@@ -283,24 +301,24 @@ class DTRTransformer(BaseEstimator, TransformerMixin):
         rule_list += rules_tuple
         rule_set |= rules_set
 
-        dt = tree.DecisionTreeClassifier(criterion = random.choice(['gini', 'entropy']),
-                                         max_depth = self.max_depth,
-                                         class_weight = random.choice(['balanced', None]),
-                                         splitter = random.choice(['best', 'random'])
-                                         )
-
         if self.n_iter >= 1:
             # TODO: use joblib
 
             counter = 0
 
             for i in range(self.n_iter):
+                dt = tree.DecisionTreeClassifier(criterion = random.choice(['gini', 'entropy']),
+                                                 max_depth = self.max_depth,
+                                                 class_weight = random.choice(['balanced', None]),
+                                                 splitter = random.choice(['best', 'random'])
+                                                 )
                 counter += 1
                 if self.verbose >= 2 and counter % 10 == 0:
                     print('Fitting tree %d of %d ' % (counter, self.n_iter))
 
-                _X_train = X.sample(frac = self.features_fraction, axis = 1)
-                dt_fitted = dt.fit(_X_train, y)
+                _X_train = X.sample(frac = self.features_fraction, axis = 1)  # .sample(n = n, frac = frac, axis = 0)
+                _y_train = y[_X_train.index]
+                dt_fitted = dt.fit(_X_train, _y_train)
                 rules_tuple, rules_set = get_rules_of_decision_tree(dt_fitted, list(_X_train.columns), percent_threshold = self.percent_threshold,
                                                                     proportion_threshold = self.proportion_threshold
                                                                     )
@@ -340,19 +358,19 @@ class DTRTransformer(BaseEstimator, TransformerMixin):
     def predict(self, X):
         y_pred_class = self.estimator.predict(X)
 
-        #if not self.rule_set:
+        # if not self.rule_set:
         return y_pred_class
 
-        #out_predictions = self.posterior['class'].where(self.posterior['class'] != -1, y_pred_class)
-        #return out_predictions.values
+        # out_predictions = self.posterior['class'].where(self.posterior['class'] != -1, y_pred_class)
+        # return out_predictions.values
 
     def predict_proba(self, X):
         probas = self.estimator.predict_proba(X)
-        #if not self.rule_set:
+        # if not self.rule_set:
         return probas
 
-        #out_probas = self.probas.where(self.probas.max(axis = 1) > -1.0, probas)
-        #return out_probas.values
+        # out_probas = self.probas.where(self.probas.max(axis = 1) > -1.0, probas)
+        # return out_probas.values
 
     def fit_transform(self, X, y = None, **fit_params):
         """Fit to data, then transform it.
