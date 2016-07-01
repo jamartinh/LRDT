@@ -87,8 +87,8 @@ def get_rules_of_decision_tree(dt, feature_names = None, percent_threshold = 0.1
         new_rule = {
             'rule': path,
             'support': value[node][0],
-            'percent': round(percent, 2),
-            'proportions': np.around(propotions[0], 2),
+            'percent': percent,
+            'proportions': propotions[0],
             'class': np.argmax(propotions[0]),
             'probability': propotions[0][np.argmax(propotions[0])],
             'power': power,
@@ -211,7 +211,7 @@ class DTRTransformer(BaseEstimator, TransformerMixin):
             _X_copy[k] = 0.0
             # get indices of samples fullining the rule
             ind = _X_copy.query(rule['rule']).index
-            _X_copy.loc[ind, k] = 2.0
+            _X_copy.loc[ind, k] = 1.0
             _X_copy.loc[ind, 'rule_class'] = 2 * (rule['class'] - 0.5)
             self.posterior.loc[ind, 'class'] = rule['class']
             self.posterior.loc[ind, 'p'] = rule['probability']
