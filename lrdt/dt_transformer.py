@@ -330,6 +330,8 @@ class DTRTransformer(BaseEstimator, TransformerMixin):
         final_rule_set = set()
 
         rules_iterator = sorted(rule_list, key = lambda x: x['probability'], reverse = True)
+        self.max_rules = min(self.max_rules, len(rule_set))
+
         for r in filter(lambda rule: rule['class'] == 0, rules_iterator):
             if len(final_rule_set) >= self.max_rules // 2:
                 break
