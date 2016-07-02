@@ -212,7 +212,7 @@ class DTRTransformer(BaseEstimator, TransformerMixin):
             # get indices of samples fullining the rule
             ind = _X_copy.query(rule['rule']).index
             _X_copy.loc[ind, k] = 1.0
-            _X_copy.loc[ind, 'rule_class'] = 2 * (rule['class'] - 0.5)
+            # _X_copy.loc[ind, 'rule_class'] = 2 * (rule['class'] - 0.5)
             self.posterior.loc[ind, 'class'] = rule['class']
             self.posterior.loc[ind, 'p'] = rule['probability']
             self.posterior.loc[ind, 'name'] = k
@@ -329,7 +329,7 @@ class DTRTransformer(BaseEstimator, TransformerMixin):
         final_rule_dict = OrderedDict()
         final_rule_set = set()
 
-        rules_iterator = sorted(rule_list, key = lambda x: x['probability'], reverse = True)
+        rules_iterator = sorted(rule_list, key = lambda x: x['percent'], reverse = True)
         self.max_rules = min(self.max_rules, len(rule_set))
 
         for r in filter(lambda rule: rule['class'] == 0, rules_iterator):
@@ -340,7 +340,7 @@ class DTRTransformer(BaseEstimator, TransformerMixin):
                 final_rule_set.add(r['rule'])
                 final_rule_dict['%s_%d' % (self.rule_prefix, len(final_rule_dict) + 1)] = r
 
-        rules_iterator = sorted(rule_list, key = lambda x: x['probability'], reverse = True)
+        rules_iterator = sorted(rule_list, key = lambda x: x['percent'], reverse = True)
         for r in filter(lambda rule: rule['class'] == 1, rules_iterator):
             if len(final_rule_set) >= self.max_rules:
                 break
