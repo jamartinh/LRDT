@@ -28,6 +28,7 @@ def simplify_rule(rule):
     if len(rule) == 1:
         feature_name, sign, value = rule[0].split()
         return feature_name + " " + sign + " " + value
+
     features = OrderedDict()
     feature_rules = OrderedDict()
     none_num = 9999999999
@@ -245,9 +246,7 @@ class DTRTransformer(BaseEstimator, TransformerMixin):
         if not self.rule_set:
             raise NotFittedError("DTRTransformer not fitted.")
 
-        X_new = self._transform_with_rules(X)
-
-        return X_new
+        return self._transform_with_rules(X)
 
     def fit_tree(self, X, y,
                  percent_threshold = None,
