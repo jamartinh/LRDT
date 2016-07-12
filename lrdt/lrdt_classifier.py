@@ -139,7 +139,7 @@ def get_rules_of_decision_tree(dt, feature_names = None, percent_threshold = 0.1
     return rules, rule_set
 
 
-class DTRTransformer(BaseEstimator, TransformerMixin):
+class LRDTClassifier(BaseEstimator, TransformerMixin):
     """Transforms an input features vector X into a X_new vector with semi-random decision tree rules added as new features to use them for classification or regression.
 
     Parameters
@@ -356,10 +356,13 @@ class DTRTransformer(BaseEstimator, TransformerMixin):
         return self
 
     def fit(self, X, y):
-        return self.estimator.fit(X, y)
+        self.fit_tree(self, X, y)
+        X_t = self.transform(X)
+        return self.estimator.fit(X_t, y)
 
     def predict(self, X):
-        y_pred_class = self.estimator.predict(X)
+        X_t = self.transform(X)
+        y_pred_class = self.estimator.predict(X_t)
 
         # if not self.rule_set:
         return y_pred_class
@@ -367,8 +370,16 @@ class DTRTransformer(BaseEstimator, TransformerMixin):
         # out_predictions = self.posterior['class'].where(self.posterior['class'] != -1, y_pred_class)
         # return out_predictions.values
 
+    def fit_predict(self, X, y = None):
+        self.fit_tree(self, X, y)
+        X_t = self.transform(X)
+        self.estimator.fit(X_t, y)
+        y_pred_class = self.estimator.predict(X_t)
+        return y_pred_class
+
     def predict_proba(self, X):
-        probas = self.estimator.predict_proba(X)
+        X_t = self.transform(X)
+        probas = self.estimator.predict_proba(X_t)
         # if not self.rule_set:
         return probas
 
