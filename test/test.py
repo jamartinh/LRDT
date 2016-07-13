@@ -19,18 +19,19 @@ from sklearn.tree import DecisionTreeClassifier
 
 # added
 from sklearn.linear_model import LogisticRegression
-from .lrdt_classifier import LRDTClassifier
+from lrdt.lrdt_classifier import LRDTClassifier
 
 h = .02  # step size in the mesh
 
-names = ["Nearest Neighbors", "Linear SVM", "RBF SVM", "Decision Tree",
-         "Random Forest", "AdaBoost", "Naive Bayes", "Linear Discriminant Analysis",
-         "Quadratic Discriminant Analysis", "Logisitc Regression Desission Tree Rules"]
+names = ["NN", "LSVM", "RBFSVM", "DT",
+         "RF", "AdaBoost", "NB", "LDA",
+         "QDA", "LRDT"
+         ]
 
 lr = LogisticRegression(penalty = 'l2',
                         dual = False,
                         tol = 1e-5,
-                        C = 0.99,
+                        C = 1,
                         fit_intercept = True,
                         intercept_scaling = 1.0,
                         solver = 'liblinear',
@@ -52,12 +53,12 @@ classifiers = [
     LRDTClassifier(
         estimator = lr,
         percent_threshold = 0.001,
-        proportion_threshold = 0.95,
-        features_fraction = 0.3,
+        proportion_threshold = 0.75,
+        features_fraction = 1.0,
         min_depth = 1,
         max_depth = 4,
-        max_rules = 50,
-        n_iter = 300,
+        max_rules = 300,
+        n_iter = 3000,
         feature_names = None,
         rule_prefix = 'rule',
         n_jobs = 1,
@@ -66,13 +67,13 @@ classifiers = [
 ]
 
 X, y = make_classification(n_features = 2, n_redundant = 0, n_informative = 2,
-                           random_state = 1, n_clusters_per_class = 1)
+                           random_state = 1, n_clusters_per_class = 2)
 rng = np.random.RandomState(2)
 X += 2 * rng.uniform(size = X.shape)
 linearly_separable = (X, y)
 
-datasets = [make_moons(noise = 0.3, random_state = 0),
-            make_circles(noise = 0.2, factor = 0.5, random_state = 1),
+datasets = [make_moons(noise = 0.4, random_state = 0),
+            make_circles(noise = 0.4, factor = 0.5, random_state = 1),
             linearly_separable
             ]
 

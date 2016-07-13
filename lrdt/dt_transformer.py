@@ -72,6 +72,7 @@ def get_rules_of_decision_tree(dt, feature_names = None, percent_threshold = 0.1
     threshold = dt.tree_.threshold
     value = dt.tree_.value
 
+
     if feature_names is None:
         features = ['f%d' % i for i in dt.tree_.feature]
     else:
@@ -98,7 +99,7 @@ def get_rules_of_decision_tree(dt, feature_names = None, percent_threshold = 0.1
 
         rule = ''
         if node > 0:
-            rule = features[parent] + sign + str(round(threshold[parent], 1))
+            rule = str(features[parent]) + sign + str(round(threshold[parent], 1))
 
         if percent >= percent_threshold and max(propotions[0]) > proportion_threshold and node > 0 and len(path) >= min_depth and rule != '':
             new_rule['rule'].append(rule)
@@ -213,7 +214,7 @@ class DTRTransformer(BaseEstimator, TransformerMixin):
             _X_copy[k] = 0.0
             # get indices of samples fullining the rule
             ind = _X_copy.query(rule['rule']).index
-            _X_copy.loc[ind, k] = 2 * (rule['class'] - 0.5) * rule['probability']
+            _X_copy.loc[ind, k] = 10 * (rule['class'] - 0.5) * rule['probability']
             # _X_copy.loc[ind, 'rule_class'] = 2 * (rule['class'] - 0.5)
             self.posterior.loc[ind, 'class'] = rule['class']
             self.posterior.loc[ind, 'p'] = rule['probability']
@@ -283,6 +284,7 @@ class DTRTransformer(BaseEstimator, TransformerMixin):
         self.min_depth = min_depth if min_depth is not None else self.min_depth
         self.max_depth = max_depth if max_depth is not None else self.max_depth
         self.n_iter = n_iter if n_iter is not None else self.n_iter
+
 
         self.classes = pd.Series(y).unique()
         MAX_INT = np.iinfo(np.int32).max
