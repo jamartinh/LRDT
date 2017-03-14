@@ -11,4 +11,6 @@ Next, by calling the transform(X) method, a new train dataset is obtained with a
 
 This usually improves significantly the performance of the simple Logistic Regression, and gives more accurate prediction than both single Decision Trees and single Logistic Regression, while also gives more interpretavility to the obtained model.
 
+Some experiments show comparable performace with the XGBoost algorithm.
+
 
