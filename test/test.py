@@ -52,13 +52,13 @@ classifiers = [
     QuadraticDiscriminantAnalysis(),
     LRDTClassifier(
         estimator = lr,
-        percent_threshold = 0.001,
-        proportion_threshold = 0.75,
+        percent_threshold = 0.01,
+        proportion_threshold = 0.95,
         features_fraction = 1.0,
         min_depth = 1,
         max_depth = 4,
-        max_rules = 300,
-        n_iter = 3000,
+        max_rules = 100,
+        n_iter = 100,
         feature_names = None,
         rule_prefix = 'rule',
         n_jobs = 1,
@@ -68,12 +68,13 @@ classifiers = [
 
 X, y = make_classification(n_features = 2, n_redundant = 0, n_informative = 2,
                            random_state = 1, n_clusters_per_class = 2)
+
 rng = np.random.RandomState(2)
 X += 2 * rng.uniform(size = X.shape)
 linearly_separable = (X, y)
 
-datasets = [make_moons(noise = 0.4, random_state = 0),
-            make_circles(noise = 0.4, factor = 0.5, random_state = 1),
+datasets = [make_moons(noise = 0.2, random_state = 0),
+            make_circles(noise = 0.2, factor = 0.5, random_state = 1),
             linearly_separable
             ]
 

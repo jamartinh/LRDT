@@ -8,6 +8,7 @@ import pandas as pd
 from sklearn import tree
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.utils import check_random_state
+from sklearn.externals.joblib import Parallel, delayed
 
 __all__ = ['DTRTransformer', 'get_rules_of_decision_tree']
 
@@ -71,7 +72,6 @@ def get_rules_of_decision_tree(dt, feature_names = None, percent_threshold = 0.1
     right = dt.tree_.children_right
     threshold = dt.tree_.threshold
     value = dt.tree_.value
-
 
     if feature_names is None:
         features = ['f%d' % i for i in dt.tree_.feature]
@@ -308,24 +308,12 @@ class DTRTransformer(BaseEstimator, TransformerMixin):
             # TODO: use joblib
 
             counter = 0
+            return_values_list = Parallel(n_jobs = 30,
+                                          verbose = 0
+                                          )(delayed(self.fit_one_tree)(X, y) for _ in range(self.n_iter))
 
-            for i in range(self.n_iter):
-                dt = tree.DecisionTreeClassifier(criterion = random.choice(['gini', 'entropy']),
-                                                 max_depth = self.max_depth,
-                                                 class_weight = random.choice(['balanced', None]),
-                                                 splitter = random.choice(['best', 'random'])
-                                                 )
-                counter += 1
-                if self.verbose >= 2 and counter % 10 == 0:
-                    print('Fitting tree %d of %d ' % (counter, self.n_iter))
-
-                _X_train = X.sample(frac = self.features_fraction, axis = 1)  # .sample(n = n, frac = frac, axis = 0)
-                _y_train = y[_X_train.index]
-                dt_fitted = dt.fit(_X_train, _y_train)
-                rules_tuple, rules_set = get_rules_of_decision_tree(dt_fitted, list(_X_train.columns), percent_threshold = self.percent_threshold,
-                                                                    proportion_threshold = self.proportion_threshold
-                                                                    )
-
+            for rules_tuple,rules_set in return_values_list:
+                # rule_list, rule_set = self.fit_one_tree(X, counter, rule_list, rule_set, y)
                 rule_list += rules_tuple
                 rule_set |= rules_set
 
@@ -356,6 +344,25 @@ class DTRTransformer(BaseEstimator, TransformerMixin):
         self.rule_set = final_rule_set
 
         return self
+
+    def fit_one_tree(self, X, y):
+        dt = tree.DecisionTreeClassifier(criterion = random.choice(['gini', 'entropy']),
+                                         max_depth = self.max_depth,
+                                         class_weight = random.choice(['balanced', None]),
+                                         splitter = random.choice(['best', 'random'])
+                                         )
+        #counter += 1
+        #if self.verbose >= 2 and counter % 10 == 0:
+        #    print('Fitting tree %d of %d ' % (counter, self.n_iter))
+        _X_train = X.sample(frac = self.features_fraction, axis = 1)
+        _y_train = y[_X_train.index]
+        dt_fitted = dt.fit(_X_train, _y_train)
+        rules_tuple, rules_set = get_rules_of_decision_tree(dt_fitted, list(_X_train.columns), percent_threshold = self.percent_threshold,
+                                                            proportion_threshold = self.proportion_threshold
+                                                            )
+        rule_list = rules_tuple
+        rule_set = rules_set
+        return rule_list, rule_set
 
     def fit(self, X, y):
         return self.estimator.fit(X, y)

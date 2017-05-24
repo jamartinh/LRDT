@@ -1,11 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" autoUpload="Always" serverName="dev-gbic-py-01">
+  <component name="PublishConfigData" autoUpload="Always">
     <serverData>
-      <paths name="dev-gbic-py-01">
+      <paths name="NodeIUC">
         <serverdata>
           <mappings>
-            <mapping deploy="/sources/lmdt" local="$PROJECT_DIR$" web="/" />
+            <mapping local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="OasisAlcala">
+        <serverdata>
+          <mappings>
+            <mapping local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="OasisChile">
+        <serverdata>
+          <mappings>
+            <mapping local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="dev-anly-hadoop-11">
+        <serverdata>
+          <mappings>
+            <mapping local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="iuc_devices">
+        <serverdata>
+          <mappings>
+            <mapping local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="iuc_home_packages">
+        <serverdata>
+          <mappings>
+            <mapping deploy="python_packages/" local="$PROJECT_DIR$" web="/" />
           </mappings>
         </serverdata>
       </paths>
