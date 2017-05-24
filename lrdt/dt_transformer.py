@@ -259,7 +259,8 @@ class DTRTransformer(BaseEstimator, TransformerMixin):
                  max_rules = None,
                  n_iter = None,
                  n = None,
-                 frac = None):
+                 frac = None,
+                 n_jobs  = None):
         """Extract rules from a series of random tress a stores them in the rules dict.
 
                 Parameters
@@ -285,6 +286,7 @@ class DTRTransformer(BaseEstimator, TransformerMixin):
         self.max_depth = max_depth if max_depth is not None else self.max_depth
         self.n_iter = n_iter if n_iter is not None else self.n_iter
 
+        n_jobs = self.n_jobs if n_jobs is None else n_jobs
 
         self.classes = pd.Series(y).unique()
         MAX_INT = np.iinfo(np.int32).max
@@ -308,7 +310,7 @@ class DTRTransformer(BaseEstimator, TransformerMixin):
             # TODO: use joblib
 
             counter = 0
-            return_values_list = Parallel(n_jobs = 30,
+            return_values_list = Parallel(n_jobs = n_jobs,
                                           verbose = 0
                                           )(delayed(self.fit_one_tree)(X, y) for _ in range(self.n_iter))
 
