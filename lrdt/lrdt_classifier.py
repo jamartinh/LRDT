@@ -9,7 +9,7 @@ class LRDTClassifier(DTRTransformer):
     A classifier version of the DTRTransformer
     """
 
-    def fit(self, X, y):
+    def fit(self, X, y, sample, sample_weight = None):
         if not hasattr(X, 'columns'):
             new_X = pd.DataFrame(X)
             new_X.columns = ['x' + str(c) for c in list(new_X.columns)]
