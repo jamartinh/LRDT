@@ -7,8 +7,8 @@ import numpy as np
 import pandas as pd
 from sklearn import tree
 from sklearn.base import BaseEstimator, TransformerMixin
-from sklearn.utils import check_random_state
 from sklearn.externals.joblib import Parallel, delayed
+from sklearn.utils import check_random_state, compute_sample_weight
 
 __all__ = ['DTRTransformer', 'get_rules_of_decision_tree']
 
@@ -260,7 +260,7 @@ class DTRTransformer(BaseEstimator, TransformerMixin):
                  n_iter = None,
                  n = None,
                  frac = None,
-                 n_jobs  = None):
+                 n_jobs = None):
         """Extract rules from a series of random tress a stores them in the rules dict.
 
                 Parameters
@@ -307,14 +307,13 @@ class DTRTransformer(BaseEstimator, TransformerMixin):
         rule_set |= rules_set
 
         if self.n_iter >= 1:
-            # TODO: use joblib
 
             counter = 0
             return_values_list = Parallel(n_jobs = n_jobs,
                                           verbose = 0
                                           )(delayed(self.fit_one_tree)(X, y) for _ in range(self.n_iter))
 
-            for rules_tuple,rules_set in return_values_list:
+            for rules_tuple, rules_set in return_values_list:
                 # rule_list, rule_set = self.fit_one_tree(X, counter, rule_list, rule_set, y)
                 rule_list += rules_tuple
                 rule_set |= rules_set
@@ -353,12 +352,12 @@ class DTRTransformer(BaseEstimator, TransformerMixin):
                                          class_weight = random.choice(['balanced', None]),
                                          splitter = random.choice(['best', 'random'])
                                          )
-        #counter += 1
-        #if self.verbose >= 2 and counter % 10 == 0:
+        # counter += 1
+        # if self.verbose >= 2 and counter % 10 == 0:
         #    print('Fitting tree %d of %d ' % (counter, self.n_iter))
         _X_train = X.sample(frac = self.features_fraction, axis = 1)
         _y_train = y[_X_train.index]
-        dt_fitted = dt.fit(_X_train, _y_train)
+        dt_fitted = dt.fit(_X_train, _y_train, sample_weight = compute_sample_weight(class_weight = 'balanced', y = _y_train))
         rules_tuple, rules_set = get_rules_of_decision_tree(dt_fitted, list(_X_train.columns), percent_threshold = self.percent_threshold,
                                                             proportion_threshold = self.proportion_threshold
                                                             )
