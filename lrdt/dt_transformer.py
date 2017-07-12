@@ -79,7 +79,6 @@ def get_rules_of_decision_tree(dt, feature_names = None, percent_threshold = 0.1
         features = [feature_names[i] for i in dt.tree_.feature]
 
     def recurse(left, right, threshold, features, node, depth = 0, parent = '', sign = '', path = []):
-        nonlocal rules
 
         node_val = value[node]
         percent = (dt.tree_.n_node_samples[node] /
@@ -137,6 +136,7 @@ def get_rules_of_decision_tree(dt, feature_names = None, percent_threshold = 0.1
                         list(path + [rule]) if rule else list(path))
 
     recurse(left, right, threshold, features, 0, 0, None, '', [])
+
     return rules, rule_set
 
 
