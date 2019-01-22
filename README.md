@@ -14,3 +14,4 @@ This usually improves significantly the performance of the simple Logistic Regre
 Some experiments show comparable performace with the XGBoost algorithm.
 
 
+pip install git+https://github.com/jamartinh/LRDT
