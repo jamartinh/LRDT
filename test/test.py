@@ -28,64 +28,64 @@ names = ["NN", "LSVM", "RBFSVM", "DT",
          "QDA", "LRDT"
          ]
 
-lr = LogisticRegression(penalty = 'l2',
-                        dual = False,
-                        tol = 1e-5,
-                        C = 1,
-                        fit_intercept = True,
-                        intercept_scaling = 1.0,
-                        solver = 'liblinear',
-                        max_iter = 1000,
-                        verbose = 0,
-                        warm_start = False,
-                        n_jobs = 7)
+lr = LogisticRegression(penalty='l2',
+                        dual=False,
+                        tol=1e-5,
+                        C=1,
+                        fit_intercept=True,
+                        intercept_scaling=1.0,
+                        solver='liblinear',
+                        max_iter=1000,
+                        verbose=0,
+                        warm_start=False,
+                        n_jobs=7)
 
 classifiers = [
     KNeighborsClassifier(3),
-    SVC(kernel = "linear", C = 0.025),
-    SVC(gamma = 2, C = 1),
-    DecisionTreeClassifier(max_depth = 5),
-    RandomForestClassifier(max_depth = 5, n_estimators = 10, max_features = 1),
+    SVC(kernel="linear", C=0.025),
+    SVC(gamma=2, C=1),
+    DecisionTreeClassifier(max_depth=5),
+    RandomForestClassifier(max_depth=5, n_estimators=10, max_features=1),
     AdaBoostClassifier(),
     GaussianNB(),
     LinearDiscriminantAnalysis(),
     QuadraticDiscriminantAnalysis(),
     LRDTClassifier(
-        estimator = lr,
-        percent_threshold = 0.01,
-        proportion_threshold = 0.95,
-        features_fraction = 1.0,
-        min_depth = 1,
-        max_depth = 4,
-        max_rules = 100,
-        n_iter = 100,
-        feature_names = None,
-        rule_prefix = 'rule',
-        n_jobs = 1,
-        random_state = None,
-        verbose = 2)
+        estimator=lr,
+        percent_threshold=0.01,
+        proportion_threshold=0.95,
+        features_fraction=1.0,
+        min_depth=1,
+        max_depth=4,
+        max_rules=100,
+        n_iter=100,
+        feature_names=None,
+        rule_prefix='rule',
+        n_jobs=1,
+        random_state=None,
+        verbose=2)
 ]
 
-X, y = make_classification(n_features = 2, n_redundant = 0, n_informative = 2,
-                           random_state = 1, n_clusters_per_class = 2)
+X, y = make_classification(n_features=2, n_redundant=0, n_informative=2,
+                           random_state=1, n_clusters_per_class=2)
 
 rng = np.random.RandomState(2)
-X += 2 * rng.uniform(size = X.shape)
+X += 2 * rng.uniform(size=X.shape)
 linearly_separable = (X, y)
 
-datasets = [make_moons(noise = 0.2, random_state = 0),
-            make_circles(noise = 0.2, factor = 0.5, random_state = 1),
+datasets = [make_moons(noise=0.2, random_state=0),
+            make_circles(noise=0.2, factor=0.5, random_state=1),
             linearly_separable
             ]
 
-figure = plt.figure(figsize = (27, 9))
+figure = plt.figure(figsize=(27, 9))
 i = 1
 # iterate over datasets
 for ds in datasets:
     # preprocess dataset, split into training and test part
     X, y = ds
     X = StandardScaler().fit_transform(X)
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = .4)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=.4)
 
     x_min, x_max = X[:, 0].min() - .5, X[:, 0].max() + .5
     y_min, y_max = X[:, 1].min() - .5, X[:, 1].max() + .5
@@ -97,9 +97,9 @@ for ds in datasets:
     cm_bright = ListedColormap(['#FF0000', '#0000FF'])
     ax = plt.subplot(len(datasets), len(classifiers) + 1, i)
     # Plot the training points
-    ax.scatter(X_train[:, 0], X_train[:, 1], c = y_train, cmap = cm_bright)
+    ax.scatter(X_train[:, 0], X_train[:, 1], c=y_train, cmap=cm_bright)
     # and testing points
-    ax.scatter(X_test[:, 0], X_test[:, 1], c = y_test, cmap = cm_bright, alpha = 0.6)
+    ax.scatter(X_test[:, 0], X_test[:, 1], c=y_test, cmap=cm_bright, alpha=0.6)
     ax.set_xlim(xx.min(), xx.max())
     ax.set_ylim(yy.min(), yy.max())
     ax.set_xticks(())
@@ -121,13 +121,13 @@ for ds in datasets:
 
         # Put the result into a color plot
         Z = Z.reshape(xx.shape)
-        ax.contourf(xx, yy, Z, cmap = cm, alpha = .8)
+        ax.contourf(xx, yy, Z, cmap=cm, alpha=.8)
 
         # Plot also the training points
-        ax.scatter(X_train[:, 0], X_train[:, 1], c = y_train, cmap = cm_bright)
+        ax.scatter(X_train[:, 0], X_train[:, 1], c=y_train, cmap=cm_bright)
         # and testing points
-        ax.scatter(X_test[:, 0], X_test[:, 1], c = y_test, cmap = cm_bright,
-                   alpha = 0.6)
+        ax.scatter(X_test[:, 0], X_test[:, 1], c=y_test, cmap=cm_bright,
+                   alpha=0.6)
 
         ax.set_xlim(xx.min(), xx.max())
         ax.set_ylim(yy.min(), yy.max())
@@ -135,8 +135,8 @@ for ds in datasets:
         ax.set_yticks(())
         ax.set_title(name)
         ax.text(xx.max() - .3, yy.min() + .3, ('%.2f' % score).lstrip('0'),
-                size = 15, horizontalalignment = 'right')
+                size=15, horizontalalignment='right')
         i += 1
 
-figure.subplots_adjust(left = .02, right = .98)
+figure.subplots_adjust(left=.02, right=.98)
 plt.show()

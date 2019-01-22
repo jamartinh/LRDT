@@ -9,7 +9,7 @@ class LRDTClassifier(DTRTransformer):
     A classifier version of the DTRTransformer
     """
 
-    def fit(self, X, y, sample, sample_weight = None):
+    def fit(self, X, y, sample, sample_weight=None):
         if not hasattr(X, 'columns'):
             new_X = pd.DataFrame(X)
             new_X.columns = ['x' + str(c) for c in list(new_X.columns)]
@@ -32,7 +32,7 @@ class LRDTClassifier(DTRTransformer):
 
         return self.estimator.predict(X_t)
 
-    def fit_predict(self, X, y = None):
+    def fit_predict(self, X, y=None):
         self.fit_tree(X, y)
         X_t = self.transform(X)
         self.estimator.fit(X_t, y)
@@ -49,7 +49,7 @@ class LRDTClassifier(DTRTransformer):
 
         return self.estimator.predict_proba(X_t)
 
-    def score(self, X, y, sample_weight = None):
+    def score(self, X, y, sample_weight=None):
         if not hasattr(X, 'columns'):
             new_X = pd.DataFrame(X)
             new_X.columns = ['x' + str(c) for c in list(new_X.columns)]
