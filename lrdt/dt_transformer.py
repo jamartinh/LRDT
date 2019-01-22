@@ -297,8 +297,13 @@ class DTRTransformer(BaseEstimator, TransformerMixin):
                                          splitter='best'
                                          )
         dt_fitted = dt.fit(X, y)
+        if isinstance(X, pd.DataFrame):
+            self.feature_names = list(X.columns)
+        elif self.feature_names is None:
+            self.feature_names = list(range(X.shape[1]))
+
         rules_tuple, rules_set = get_rules_of_decision_tree(dt_fitted,
-                                                            feature_names=list(X.columns),
+                                                            feature_names=self.feature_names,
                                                             percent_threshold=self.percent_threshold,
                                                             proportion_threshold=self.proportion_threshold,
                                                             min_depth=self.min_depth
@@ -309,7 +314,7 @@ class DTRTransformer(BaseEstimator, TransformerMixin):
         if self.n_iter >= 1:
 
             counter = 0
-            return_values_list = Parallel(n_jobs=n_jobs, verbose=1,require='sharedmem',prefer='threads'
+            return_values_list = Parallel(n_jobs=n_jobs, verbose=1, require='sharedmem', prefer='threads'
                                           )(delayed(self.fit_one_tree)(X, y) for _ in range(self.n_iter))
 
             for rules_tuple, rules_set in return_values_list:
