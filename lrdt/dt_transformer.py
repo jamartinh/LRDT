@@ -213,8 +213,8 @@ class DTRTransformer(BaseEstimator, TransformerMixin):
             _X_copy[k] = 0.0
             # get indices of samples fullining the rule
             ind = _X_copy.query(rule['rule']).index
-            #_X_copy.loc[ind, k] = 10 * (rule['class'] - 0.5) * rule['probability']
-            _X_copy.loc[ind, k] = 1
+            _X_copy.loc[ind, k] = 10 * (rule['class'] - 0.5) * rule['probability']
+            #_X_copy.loc[ind, k] = 1
             # _X_copy.loc[ind, 'rule_class'] = 2 * (rule['class'] - 0.5)
             self.posterior.loc[ind, 'class'] = rule['class']
             self.posterior.loc[ind, 'p'] = rule['probability']
@@ -302,7 +302,7 @@ class DTRTransformer(BaseEstimator, TransformerMixin):
 
         n_jobs = self.n_jobs if n_jobs is None else n_jobs
 
-        self.classes = pd.Series(y).unique()
+        self.classes = list(sorted(pd.Series(y).unique()))
         MAX_INT = np.iinfo(np.int32).max
         rule_list = []
         rule_set = set()
